@@ -1,6 +1,9 @@
+import logging
 from config import *
 from flask import *
 import time
+
+logging.basicConfig(level=logging._ExcInfoType)
 
 conn.commit()
 
@@ -17,7 +20,7 @@ def webhook():
 
 
 
-@bot.message_handler(commands=['start'])
+@bot.message_handler()
 def welcome(msg):
     cid = msg.chat.id
     text = msg.text
@@ -32,7 +35,7 @@ def welcome(msg):
 <i>🎬 Kino kanalimizga kiring!</i>""",reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(text="🔎 Kanalimiz",url="https://t.me/Xeact_Uz")))
     elif text.split(" ")[0] and len(text)>5:
       code = text.split(" ")[1]
-      if 's' in code:
+      if 's' in code and join(cid,code):
         code = code.replace("s","")
         all = cursor.execute(f"SELECT * FROM serial WHERE id={code}").fetchone()
         if all:
@@ -47,31 +50,22 @@ def welcome(msg):
           key.add(*m)
           bot.send_photo(cid,photo=all[2],caption=f"<b>#{name} - seriali!\n\n🎬 Qisimlar: {len(json)}</b>",reply_markup=key)
           
-      elif 'f' in code:
-        while(join1(cid)):
-          print("Hey")
-          break
-        if join(cid):
-          code = code.replace("f","")
-          check = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
-          if check:
-            json = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
-            bot.send_video(cid,json[1],protect_content=True,reply_markup=share_button())
-          else:
-            bot.send_message(cid,"kod xato!")
+      elif 'f' in code and join(cid,code):
+        code = code.replace("f","")
+        check = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
+        if check:
+          json = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
+          bot.send_video(cid,json[1],protect_content=True,reply_markup=share_button())
+        else:
+          bot.send_message(cid,"kod xato!")
       elif 'F' in code:
-        while(join1(cid)):
-          print("Hey")
-          time.sleep(60)
-          break
-        if join(cid):
-          code = code.replace("F","")
-          check = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
-          if check:
-            json = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
-            bot.send_video(cid,json[1],protect_content=True,reply_markup=share_button())
-          else:
-            bot.send_message(cid,"kod xato!")
+        code = code.replace("F","")
+        check = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
+        if check:
+          json = cursor.execute(f"SELECT * FROM kino WHERE id={code}").fetchone()
+          bot.send_video(cid,json[1],protect_content=True,reply_markup=share_button())
+        else:
+          bot.send_message(cid,"kod xato!")
         
 
 
@@ -80,7 +74,7 @@ def welcome(msg):
 
 @bot.message_handler(content_types=['video'])
 def add_video(msg):
-  if msg.chat.id==ADMIN_ID:
+  if msg.chat.id==ADMIN_ID or msg.chat.id == BOSHLIQ:
     file_id=msg.video.file_id
     caption = msg.caption
     FILE_ID['id'] = file_id
@@ -150,17 +144,7 @@ Bot statistikasi 📊
 def callback(call):
   cid = call.message.chat.id
   mid = call.message.id
-  data = call.data
-  if data=="member":
-    bot.delete_message(cid,mid)
-    if join(cid):
-      bot.send_message(cid,f"""
-<b>👋 Salom {call.message.from_user.first_name}!</b>
-
-<i>🎬 Kino kanalimizga kiring!
-</i>
-""",reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(text="Instagram",url="https://www.instagram.com/xeact_uz")))
-      
+  data = call.data      
     
   if data=='solo':
     try:
@@ -172,7 +156,7 @@ def callback(call):
       else:
         code = all[-1][0]+1
       cursor.execute(f"INSERT INTO kino(file_id,caption) VALUES('{file_id}','{caption}')")
-      bot.send_video(cid,video=file_id,caption=f"https://t.me/Xeact_bot?start=f{code}",reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(text="📥 Yuklab olish",url=f"https://t.me/Xeact_bot?start=f{code}")))
+      bot.send_video(cid,video=file_id,caption=f"https://xeact.uz/link.php?link=f{code}",reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(text="📥 Yuklab olish",url=f"https://t.me/Xeact_bot?start=f{code}")))
 
     except Exception as e:
       print(e)
@@ -188,7 +172,7 @@ def callback(call):
       code = all[-1][0]+1
     serial = cursor.execute(f"SELECT * FROM serial WHERE id={id}").fetchone()[1]
     cursor.execute(f"INSERT INTO movies(file_id,caption,serial) VALUES('{file_id}','{caption}','{serial}')")
-    bot.send_video(cid,video=file_id,caption=f"https://t.me/Xeact_bot?start=s{id}",reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(text="📥 Yuklab olish",url=f"https://t.me/Xeact_bot?start=s{id}")))
+    bot.send_video(cid,video=file_id,caption=f"https://xeact.uz/link.php?link=s{id}",reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(text="📥 Yuklab olish",url=f"https://t.me/Xeact_bot?start=s{id}")))
   
   elif "yukla" in data:
     id  = data.split("-")[1]
@@ -206,7 +190,7 @@ def callback(call):
       m.append(InlineKeyboardButton(text=f"🗑 {c}",callback_data=f'del-{i[0]}'))
     key.add(*m)
     key.add(InlineKeyboardButton(text=f"❌ Serial",callback_data=f'remove-{id}'),InlineKeyboardButton(text=f"Post share",callback_data=f'share-{id}'))
-    bot.send_photo(cid,photo=json[2],caption=f"<b>🎥 Serial: {json[1]}\n📥 Yuklash: https://t.me/Xeact_bot?start=s{id}\n🎬 Qisimlar: {c}</b>",reply_markup=key)
+    bot.send_photo(cid,photo=json[2],caption=f"<b>🎥 Serial: {json[1]}\n📥 Yuklash: https://xeact.uz/link.php?link=s{id}\n🎬 Qisimlar: {c}</b>",reply_markup=key)
   elif "del" in data:
     id  = data.split("-")[1]
     bot.delete_message(cid,mid)
@@ -243,5 +227,7 @@ def callback(call):
 </b>
 """,reply_markup=InlineKeyboardMarkup().add(InlineKeyboardButton(text="📥 Yuklab olish",url=f"https://t.me/Xeact_bot?start=s{id}")))
 
+
+#app.run(host='0.0.0.0', port=81)
 print(bot.get_me())
 bot.polling()
