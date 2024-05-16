@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from bot.db import return_cnt,get_data
-
 app = Flask(__name__)
 
 @app.route("/kino", methods=['GET'])

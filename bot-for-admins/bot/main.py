@@ -1,14 +1,13 @@
-from telebot import TeleBot,types
-import os
-from db import db
+from telebot import TeleBot, types
+from . import mk_vd
 
 def set_step(step):
-    with open("../data/odam.step", 'w+') as f:
+    with open("data/odam.step", 'w+') as f:
         f.write(step)
 
-def get_step():
+def get_step() -> str:
     try:
-        with open("../data/odam.step", 'r+') as f:
+        with open("data/odam.step", 'r+') as f:
             step = f.read()
         return step
     except:
@@ -63,12 +62,13 @@ def home(msg : types.Message):
         set_step("end_kino")
     elif get_step()=="end_kino" and text != "Kino" and text != "/start":
         mk_db("down_link.txt",msg.text)
-        db.mk_vd(read_db("k_name.txt"),read_db("about.txt"),read_db("pic_link.txt"),read_db("down_link.txt"))
+        mk_vd(read_db("k_name.txt"),read_db("about.txt"),read_db("pic_link.txt"),read_db("down_link.txt"))
         x = read_db("k_name.txt"),read_db("about.txt"),read_db("pic_link.txt"),read_db("down_link.txt")
-        app.send_message(chat_id=chat_id,text=f"Qabul qilindi + {x}")
+        app.send_message(chat_id=chat_id ,text=f"Qabul qilindi + {x}")
         set_step("default")
 
-db.mk_vd("salom","zor kino","rasm_linki","yuklash_linki")
-db.get_vd()
-print(db.cnt_vd()[0])
-app.polling()
+mk_vd(name="salom", about="zor kino", pic_link="rasm_linki", down_code="yuklash_linki")
+
+
+if __name__ == '__main__':
+    app.polling()
