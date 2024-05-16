@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from db import return_cnt,get_data
+from bot.db import return_cnt,get_data
 
 app = Flask(__name__)
 

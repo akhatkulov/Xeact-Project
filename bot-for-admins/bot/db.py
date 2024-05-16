@@ -7,7 +7,7 @@ try:
 except:
     pass
 try:
-    os.mkdir("data")
+    os.mkdir("../data")
 except:
     pass
 

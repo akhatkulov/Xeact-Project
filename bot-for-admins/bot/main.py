@@ -3,12 +3,12 @@ import os
 from db import db
 
 def set_step(step):
-    with open("data/odam.step",'w+') as f:
+    with open("../data/odam.step", 'w+') as f:
         f.write(step)
 
 def get_step():
     try:
-        with open("data/odam.step",'r+') as f:
+        with open("../data/odam.step", 'r+') as f:
             step = f.read()
         return step
     except:
@@ -25,7 +25,7 @@ def admin_keys():
     return x
 
 def mk_db(fname,content_x):
-    with open(f"data/{fname}","w+") as f:  
+    with open(f"data/{fname}","w+") as f:
          f.write(content_x)
 
 def read_db(fname):
