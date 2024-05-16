@@ -1,1 +1,1 @@
-from .db import mk_vd
+from .db import mk_vd,get_data,cnt_vd

@@ -1,12 +1,17 @@
 from flask import Flask, jsonify, request
-from bot.db import return_cnt,get_data
+from bot import get_data,cnt_vd
 app = Flask(__name__)
 
 @app.route("/kino", methods=['GET'])
 def kino_api():
-    y = int(request.args.get('page')) 
+    y = int(request.args.get('page'))
+    print("-----------")
+    print(y)
+    print(cnt_vd())
+    print(get_data(y))
+    print("-----------")
     return jsonify({
-        "page": return_cnt()[0],
+        "page": cnt_vd()/10,
         "currentPage": y,
         "data":get_data(y),
         "status": 200 

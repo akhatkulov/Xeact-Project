@@ -1,5 +1,5 @@
 from telebot import TeleBot, types
-from . import mk_vd
+from db import mk_vd
 
 def set_step(step):
     with open("data/odam.step", 'w+') as f:
@@ -62,13 +62,10 @@ def home(msg : types.Message):
         set_step("end_kino")
     elif get_step()=="end_kino" and text != "Kino" and text != "/start":
         mk_db("down_link.txt",msg.text)
-        mk_vd(read_db("k_name.txt"),read_db("about.txt"),read_db("pic_link.txt"),read_db("down_link.txt"))
+        mk_vd(name=read_db("k_name.txt"),about=read_db("about.txt"),pic_link=read_db("pic_link.txt"),down_code=read_db("down_link.txt"))
         x = read_db("k_name.txt"),read_db("about.txt"),read_db("pic_link.txt"),read_db("down_link.txt")
         app.send_message(chat_id=chat_id ,text=f"Qabul qilindi + {x}")
         set_step("default")
-
-mk_vd(name="salom", about="zor kino", pic_link="rasm_linki", down_code="yuklash_linki")
-
 
 if __name__ == '__main__':
     app.polling()
